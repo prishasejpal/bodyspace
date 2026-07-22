@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>BodySpace (Draft)</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.x/dist/tabler-icons.min.css" />
+
+  <style>
+    /* Sibling of MindSpace — same template, BodySpace coral palette */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #f4f6f9;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .app {
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      width: 100%;
+      max-width: 600px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Draft banner — remove ONLY after professional review sign-off */
+    .draft-banner {
+      background: #FFF7E0;
+      border-bottom: 0.5px solid #F0D48A;
+      color: #92610A;
+      font-size: 12px;
+      font-weight: 600;
+      text-align: center;
+      padding: 8px 16px;
+    }
+
+    .header {
+      text-align: center;
+      padding: 1.5rem 1rem 1rem;
+      border-bottom: 0.5px solid #e5e7eb;
+    }
+    .logo {
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      background: #FDEBE4;          /* MindSpace: #E1F5EE */
+      border: 1px solid #E8967A;    /* MindSpace: #5DCAA5 */
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 10px;
+      font-size: 24px;
+    }
+    .header h1 { font-size: 22px; font-weight: 600; color: #111; }
+    .header p { font-size: 13px; color: #6b7280; margin-top: 3px; }
+
+    .checkin {
+      padding: 12px 16px;
+      border-bottom: 0.5px solid #e5e7eb;
+    }
+    .checkin-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: #9CA3AF;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+    .mood-row { display: flex; gap: 6px; flex-wrap: wrap; }
+    .mood-btn {
+      border: 0.5px solid #d1d5db;
+      background: #fff;
+      border-radius: 20px;
+      padding: 5px 12px;
+      font-size: 13px;
+      cursor: pointer;
+      color: #374151;
+      transition: all 0.15s;
+    }
+    .mood-btn:hover { background: #FDEBE4; color: #94402B; border-color: #E8967A; }
+    .mood-btn.active { background: #FDEBE4; color: #94402B; border-color: #E8967A; font-weight: 500; }
+
+    /* Safety banner — always visible for a health tool, not keyword-triggered */
+    .safety-banner {
+      background: #FEF2F2;
+      border-top: 0.5px solid #FECACA;
+      border-bottom: 0.5px solid #FECACA;
+      padding: 12px 16px;
+    }
+    .safety-title {
+      font-size: 13px; font-weight: 600; color: #991B1B;
+      margin-bottom: 8px; display: flex; align-items: center; gap: 6px;
+    }
+    .safety-line {
+      font-size: 13px; color: #B91C1C; margin: 4px 0;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .safety-line i { font-size: 15px; }
+
+    .chat-box {
+      height: 340px;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: #fafafa;
+    }
+
+    .msg { display: flex; gap: 8px; align-items: flex-end; }
+    .msg.user { flex-direction: row-reverse; }
+
+    .avatar {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .av-bot { background: #FDEBE4; font-size: 16px; }
+    .av-user { background: #DBEAFE; }
+
+    .bubble {
+      max-width: 78%;
+      padding: 9px 13px;
+      font-size: 14px;
+      line-height: 1.6;
+      border-radius: 16px;
+    }
+    .msg.bot .bubble {
+      background: #ffffff;
+      color: #111;
+      border: 0.5px solid #e5e7eb;
+      border-radius: 4px 16px 16px 16px;
+    }
+    .msg.user .bubble {
+      background: #FDEBE4;
+      color: #6B2E1B;               /* MindSpace: #064E3B */
+      border-radius: 16px 4px 16px 16px;
+    }
+
+    .typing-wrap { display: none; gap: 8px; align-items: flex-end; }
+    .typing-wrap.show { display: flex; }
+    .typing-dots {
+      background: #fff;
+      border: 0.5px solid #e5e7eb;
+      border-radius: 4px 16px 16px 16px;
+      padding: 10px 14px;
+      display: flex; gap: 4px; align-items: center;
+    }
+    .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #9CA3AF;
+      animation: bounce 1.1s infinite;
+    }
+    .dot:nth-child(2) { animation-delay: 0.18s; }
+    .dot:nth-child(3) { animation-delay: 0.36s; }
+    @keyframes bounce {
+      0%,60%,100% { transform: translateY(0); }
+      30% { transform: translateY(-5px); }
+    }
+
+    .input-area {
+      display: flex; gap: 8px;
+      padding: 10px 16px;
+      border-top: 0.5px solid #e5e7eb;
+      background: #fff;
+      align-items: flex-end;
+    }
+    .chat-input {
+      flex: 1;
+      border: 0.5px solid #d1d5db;
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-family: inherit;
+      resize: none;
+      min-height: 42px;
+      max-height: 110px;
+      color: #111;
+      background: #fff;
+      line-height: 1.5;
+    }
+    .chat-input:focus { outline: none; border-color: #E8967A; box-shadow: 0 0 0 2px rgba(232,150,122,0.18); }
+    .send-btn {
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      background: #C75B3F;          /* MindSpace: #1D9E75 */
+      border: none;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .send-btn:hover { background: #94402B; }
+    .send-btn:active { transform: scale(0.93); }
+    .send-btn i { color: white; font-size: 18px; }
+    .send-btn:disabled { background: #e5e7eb; cursor: not-allowed; }
+    .send-btn:disabled i { color: #9CA3AF; }
+
+    .chips {
+      display: flex; gap: 6px;
+      flex-wrap: wrap;
+      padding: 8px 16px 10px;
+      border-top: 0.5px solid #e5e7eb;
+      background: #fff;
+    }
+    .chip {
+      font-size: 12px;
+      padding: 4px 11px;
+      border-radius: 12px;
+      border: 0.5px solid #e5e7eb;
+      background: #f9fafb;
+      color: #6b7280;
+      cursor: pointer;
+      transition: all 0.12s;
+    }
+    .chip:hover { border-color: #E8967A; color: #94402B; background: #FDEBE4; }
+
+    .footer {
+      text-align: center;
+      font-size: 11px;
+      color: #9CA3AF;
+      padding: 8px 16px 12px;
+      line-height: 1.7;
+      background: #fff;
+      border-top: 0.5px solid #e5e7eb;
+    }
+  </style>
+</head>
+<body>
+
+<div class="app">
+
+  <div class="draft-banner">DRAFT — not yet reviewed by medical professionals · not open to the public</div>
+
+  <div class="header">
+    <div class="logo">🍎</div>
+    <h1>BodySpace</h1>
+    <p>Health questions, answered kindly — no judgment, anytime</p>
+  </div>
+
+  <div class="checkin">
+    <div class="checkin-label">What do you want to understand better?</div>
+    <div class="mood-row">
+      <button class="mood-btn" onclick="pickTopic(this,'sleep','The user wants to learn about sleep.')">Sleep</button>
+      <button class="mood-btn" onclick="pickTopic(this,'eating well','The user wants to learn about nutrition basics.')">Eating well</button>
+      <button class="mood-btn" onclick="pickTopic(this,'exercise','The user wants to learn about exercise.')">Exercise</button>
+      <button class="mood-btn" onclick="pickTopic(this,'growing up','The user has questions about puberty and normal development.')">Growing up</button>
+      <button class="mood-btn" onclick="pickTopic(this,'when to see a doctor','The user wants to know when a symptom is worth seeing a doctor about.')">When to see a doctor</button>
+    </div>
+  </div>
+
+  <div class="safety-banner">
+    <div class="safety-title"><i class="ti ti-stethoscope"></i> BodySpace is not a doctor and cannot diagnose you</div>
+    <div class="safety-line"><i class="ti ti-urgent"></i> Emergency? Call <strong>911</strong> or tell an adult near you right now</div>
+    <div class="safety-line"><i class="ti ti-phone"></i> Struggling emotionally? Call or text <strong>988</strong> (free, 24/7)</div>
+    <div class="safety-line"><i class="ti ti-user-heart"></i> For anything about your own body that worries you — talk to a parent, school nurse, or doctor</div>
+  </div>
+
+  <div class="chat-box" id="chat-box">
+    <div class="msg bot">
+      <div class="avatar av-bot">🍎</div>
+      <div class="bubble">Hi, I'm BodySpace — a judgment-free place to ask the health questions you might be embarrassed to ask out loud. Sleep, food, exercise, growing up, when something's worth telling a doctor about — ask away. What would you like to know?</div>
+    </div>
+  </div>
+
+  <div style="padding: 0 16px 4px; background: #fafafa;">
+    <div class="typing-wrap" id="typing-wrap">
+      <div class="avatar av-bot">🍎</div>
+      <div class="typing-dots">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="input-area">
+    <textarea
+      class="chat-input"
+      id="chat-input"
+      placeholder="Ask a health question..."
+      rows="1"
+      onkeydown="handleKey(event)"
+      oninput="resize(this)"
+    ></textarea>
+    <button class="send-btn" id="send-btn" onclick="send()" aria-label="Send message">
+      <i class="ti ti-send"></i>
+    </button>
+  </div>
+
+  <div class="chips">
+    <div class="chip" onclick="quick('How much sleep do teenagers actually need?')">Teen sleep needs</div>
+    <div class="chip" onclick="quick('What does healthy eating actually look like for a teenager?')">Healthy eating</div>
+    <div class="chip" onclick="quick('Is what I am going through in puberty normal?')">Is this normal?</div>
+    <div class="chip" onclick="quick('When is a symptom worth telling a parent or doctor about?')">Worth telling a doctor?</div>
+    <div class="chip" onclick="quick('How do I bring up an embarrassing health question with my doctor?')">Talking to your doctor</div>
+  </div>
+
+  <div class="footer">
+    BodySpace is an AI health education companion, not a medical provider. It cannot diagnose or treat anything.<br />
+    In any medical emergency, call <strong>911</strong>. For emotional crisis, call or text <strong>988</strong>.
+  </div>
+
+</div><!-- end .app -->
+
+
+<script>
+  // Crisis keyword detection — same protocol as MindSpace
+  const CRISIS_KEYWORDS = [
+    'suicide', 'suicidal', 'kill myself', 'end my life',
+    'want to die', 'not worth living', 'self harm',
+    'cut myself', 'hurt myself', 'no reason to live',
+    'disappear forever', 'everyone would be better',
+    'better off dead', 'dont want to be here anymore'
+  ];
+
+  // NOTE: the system prompt lives in server.js — the browser only
+  // sends messages. Do not move the prompt into this file.
+
+  let history = [];
+  let topicContext = '';
+  let isLoading = false;
+
+  function pickTopic(btn, topic, context) {
+    document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    topicContext = context;
+    quick(`I'd like to learn about ${topic}`);
+  }
+
+  function isCrisis(text) {
+    const t = text.toLowerCase();
+    return CRISIS_KEYWORDS.some(w => t.includes(w));
+  }
+
+  function addMsg(role, text) {
+    const box = document.getElementById('chat-box');
+    const wrap = document.createElement('div');
+    wrap.className = `msg ${role}`;
+
+    const av = document.createElement('div');
+    av.className = `avatar ${role === 'bot' ? 'av-bot' : 'av-user'}`;
+    av.innerHTML = role === 'bot'
+      ? '🍎'
+      : '<i class="ti ti-user" style="font-size:14px;color:#1D4ED8"></i>';
+
+    const bub = document.createElement('div');
+    bub.className = 'bubble';
+    bub.textContent = text;
+
+    if (role === 'user') { wrap.appendChild(bub); wrap.appendChild(av); }
+    else { wrap.appendChild(av); wrap.appendChild(bub); }
+
+    box.appendChild(wrap);
+    box.scrollTop = box.scrollHeight;
+
+    history.push({ role: role === 'bot' ? 'assistant' : 'user', content: text });
+  }
+
+  function setTyping(on) {
+    document.getElementById('typing-wrap').classList.toggle('show', on);
+    const box = document.getElementById('chat-box');
+    box.scrollTop = box.scrollHeight;
+  }
+
+  function setLoading(on) {
+    isLoading = on;
+    document.getElementById('send-btn').disabled = on;
+  }
+
+  async function send() {
+    if (isLoading) return;
+    const input = document.getElementById('chat-input');
+    const text = input.value.trim();
+    if (!text) return;
+
+    input.value = '';
+    resize(input);
+    addMsg('user', text);
+
+    setTyping(true);
+    setLoading(true);
+
+    try {
+      // Relative path — works locally AND deployed on Render
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: history.slice(-16)
+        })
+      });
+
+      const data = await res.json();
+      setTyping(false);
+      setLoading(false);
+
+      if (data.reply) {
+        addMsg('bot', data.reply);
+      } else {
+        addMsg('bot', 'I had trouble connecting. Please try again in a moment.');
+      }
+
+    } catch (e) {
+      setTyping(false);
+      setLoading(false);
+      addMsg('bot', 'Connection error. Please check your internet and try again.');
+    }
+  }
+
+  function quick(text) {
+    document.getElementById('chat-input').value = text;
+    send();
+  }
+
+  function handleKey(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      send();
+    }
+  }
+
+  function resize(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 110) + 'px';
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "name": "bodyspace",
+  "version": "1.0.0",
+  "description": "BodySpace - teen health education companion (DRAFT - under professional review)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "node-fetch": "^2.7.0"
+  }
+}
